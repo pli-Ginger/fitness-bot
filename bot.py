@@ -16,10 +16,8 @@ from telegram.ext import (
     filters
 )
 
-# קריאת TOKEN מ-Environment Variable
 BOT_TOKEN = os.environ.get("BOT_TOKEN")
 
-# מצבי שיחה
 WAITING_MEAL_NAME, WAITING_MEAL_CALORIES, WAITING_MEAL_PROTEIN = range(3)
 WAITING_WORKOUT_TYPE, WAITING_WORKOUT_DURATION = range(10, 12)
 WAITING_WEIGHT = 20
@@ -36,7 +34,7 @@ def save_data(data):
     with open(DATA_FILE, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
-def get_user_data(user_id: str):
+def get_user_data(user_id):
     data = load_data()
     user_id = str(user_id)
     if user_id not in data:
@@ -49,7 +47,7 @@ def get_user_data(user_id: str):
         save_data(data)
     return data[user_id]
 
-def save_user_data(user_id: str, user_data: dict):
+def save_user_data(user_id, user_data):
     data = load_data()
     data[str(user_id)] = user_data
     save_data(data)
@@ -433,6 +431,8 @@ def main():
         print("❌ חסר BOT_TOKEN!")
         return
     
+    print("🏋️ מתחיל את הבוט...")
+    
     app = Application.builder().token(BOT_TOKEN).build()
     
     meal_handler = ConversationHandler(
@@ -491,7 +491,7 @@ def main():
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_text))
     
     print("🏋️ הבוט פועל!")
-    app.run_polling()
+    app.run_polling(allowed_updates=Update.ALL_TYPES)
 
 if __name__ == "__main__":
     main()
